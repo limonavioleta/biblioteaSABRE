@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIBLIOTECA SaBré</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-principal: #121212;
+            --bg-tarjeta: #1a1a1a;
+            --color-amarillo: #d2ff00;
+            --texto-blanco: #ffffff;
+            --texto-gris: #aaaaaa;
+            --borde-tarjeta: #333333;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-blanco);
+            padding: 20px 40px;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+        }
+
+        .logo { font-size: 1.3rem; font-weight: bold; color: var(--texto-blanco); }
+        nav a { color: var(--texto-blanco); text-decoration: none; margin: 0 12px; font-size: 0.85rem; font-weight: bold; }
+        .header-acciones { display: flex; gap: 10px; align-items: center; }
+        
+        .btn-buscar-icon {
+            background-color: transparent; border: 1px solid var(--color-amarillo); color: var(--color-amarillo); padding: 6px 12px; cursor: pointer;
+        }
+        .btn-accesibilidad {
+            background-color: var(--color-amarillo); color: #000; border: none; padding: 8px 16px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block;
+        }
+
+        footer {
+            margin-top: 50px; padding-top: 15px; border-top: 1px solid #333; display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-amarillo);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">BIBLIOTECA SaBré</div>
+        <nav>
+            <a href="{% url 'clientes:index' %}">Inicio</a>
+            <a href="#">Préstamos de Libros</a>
+            <a href="#">Audio Libro</a>
+            <a href="#">Braille</a>
+        </nav>
+        <div class="header-acciones">
+            <button class="btn-buscar-icon" aria-label="Buscar">🔍</button>
+            
+            <!-- SI EL CLIENTE TIENE SESIÓN INICIADA -->
+            {% if user.is_authenticated %}
+                <span class="btn-accesibilidad">
+                    👤 {{ user.first_name|default:user.username }}
+                </span>
+                <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm fw-bold">
+                    Cerrar Sesión
+                </a>
+            <!-- SI NO HA INICIADO SESIÓN -->
+            {% else %}
+                <button class="btn-accesibilidad" data-bs-toggle="modal" data-bs-target="#modalAccesibilidadLogin">
+                    Accesibilidad / Cuenta
+                </button>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Área de Notificaciones / Cartel de Éxito -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-dismissible fade show text-center" role="alert" style="background-color: #1a1a1a; border: 2px solid var(--color-amarillo); color: white;">
+                    {{ message|safe }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- CONTENIDO PRINCIPAL -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- VENTANA EMERGENTE (MODAL ACCESO / REGISTRO) -->
+    <div class="modal fade" id="modalAccesibilidadLogin" tabindex="-1" aria-labelledby="modalAccesibilidadLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background-color: var(--bg-tarjeta); border: 2px solid var(--color-amarillo); color: white;">
+                <div class="modal-header" style="border-bottom: 1px solid #333;">
+                    <h5 class="modal-title" id="modalAccesibilidadLabel" style="color: var(--color-amarillo);">Acceso a la Biblioteca</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <form action="{% url 'login' %}" method="POST" class="mb-4">
+                        {% csrf_token %}
+                        <h6 style="color: var(--color-amarillo); margin-bottom: 15px;">1. Si ya tenés cuenta, ingresá aquí:</h6>
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label small">Nombre de Usuario</label>
+                            <input type="text" name="username" id="id_username" class="form-control" style="background-color: #222; color: white; border: 1px solid #444;" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label small">Contraseña</label>
+                            <input type="password" name="password" id="id_password" class="form-control" style="background-color: #222; color: white; border: 1px solid #444;" required>
+                        </div>
+
+                        <button type="submit" class="btn-accesibilidad w-100">Ingresar a mi Cuenta</button>
+                    </form>
+
+                    <hr style="border-color: #444; margin: 20px 0;">
+
+                    <div class="text-center">
+                        <h6 style="color: var(--color-amarillo); margin-bottom: 10px;">2. ¿Sos un nuevo lector?</h6>
+                        <p class="small" style="color: var(--texto-gris); margin-bottom: 15px;">
+                            Sumate a nuestra comunidad para reservar libros y colaborar con los comedores de Merlo.
+                        </p>
+                        <a href="{% url 'crear_lector' %}" class="btn w-100 fw-bold" style="border: 1px solid var(--color-amarillo); color: var(--color-amarillo); background: transparent;">
+                            📝 Crear Nueva Cuenta / Registrarme
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2026 BIBLIOTECA SaBré - ACCESO UNIVERSAL</div>
+        <div>Privacidad | Contacto | Soporte Técnico</div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

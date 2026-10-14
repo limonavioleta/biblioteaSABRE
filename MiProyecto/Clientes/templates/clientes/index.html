@@ -1,0 +1,82 @@
+{% extends 'clientes/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Encabezado principal y bienvenida al cliente -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="p-5 mb-4 bg-light rounded-3 shadow-sm border">
+                <div class="container-fluid py-3">
+                    <h1 class="display-5 fw-bold text-dark">Bienvenido al Catálogo de la Biblioteca</h1>
+                    <p class="col-md-8 fs-4 text-muted">
+                        Explora nuestros libros disponibles, realiza tus reservas de manera sencilla y consulta el calendario de talleres gratuitos colaborando con un alimento no perecedero.
+                    </p>
+                    
+                    <!-- Botones de funcionalidad solicitados para el Cliente -->
+                    <div class="mt-4">
+                        <a href="{% url 'clientes:reservar_libro' %}" class="btn btn-primary btn-lg me-2 mb-2">
+                            <i class="fas fa-book"></i> Reservar Libro
+                        </a>
+                        <a href="{% url 'clientes:inscribir_taller' %}" class="btn btn-success btn-lg mb-2">
+                            <i class="fas fa-calendar-alt"></i> Ver Calendario / Inscribirse a Talleres
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Catálogo / Listado de Libros -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <h3 class="border-bottom pb-2">Catálogo General de Libros</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if libros %}
+            {% for libro in libros %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary">{{ libro.nombre }}</h5>
+                        <p class="card-text text-muted mb-2"><strong>Autor / Marca:</strong> {{ libro.marca }}</p>
+                        <p class="card-text flex-grow-1">Ejemplar disponible en la biblioteca para préstamo y consulta general.</p>
+                        <a href="{% url 'clientes:reservar_libro' %}" class="btn btn-outline-primary mt-auto">
+                            Reservar este libro
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <!-- Mensaje en caso de que no haya libros o esté cargando la vista de lectura -->
+            <div class="col-md-12">
+                <div class="alert alert-info text-center shadow-sm" role="alert">
+                    <h5 class="alert-heading">¡Catálogo al día!</h5>
+                    <p class="mb-0">Actualmente estás visualizando la página principal del cliente. Utiliza los botones superiores para gestionar tus reservas o inscribirte a los talleres comunitarios.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Sección informativa sobre Talleres y Donaciones de Alimentos -->
+    <div class="row mt-5 mb-5">
+        <div class="col-md-12">
+            <div class="card bg-white border-success shadow-sm">
+                <div class="card-body p-4">
+                    <h4 class="card-title text-success">Talleres Comunitarios Gratuitos</h4>
+                    <p class="card-text text-muted">
+                        Participa en nuestros talleres presenciales. El acceso es totalmente gratuito presentando 
+                        <strong>un alimento no perecedero</strong> al ingresar. Al completar tu inscripción mediante el formulario, 
+                        el sistema generará y enviará un número de cupón único a tu correo electrónico con todos tus datos personales.
+                    </p>
+                    <a href="{% url 'clientes:inscribir_taller' %}" class="btn btn-success">
+                        Ir al Formulario de Inscripción y Talleres
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

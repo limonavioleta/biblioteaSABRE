@@ -1,0 +1,19 @@
+<!-- templates/clientes/login.html -->
+{% extends 'clientes/base.html' %}
+
+{% block content %}
+<main class="contenedor-form" style="max-width: 500px; margin: 40px auto;">
+    <h1 style="color: var(--color-amarillo); margin-bottom: 20px;">Iniciar Sesión</h1>
+
+    <form action="" method="POST">
+        {% csrf_token %} <!-- Obligatorio para seguridad[cite: 23] -->
+        {{ form.as_p }} <!-- Genera los inputs automáticamente -->
+        
+        <button type="submit" class="btn-accesibilidad" style="width: 100%; margin-top: 15px;" aria-label="Ingresar a mi cuenta">Ingresar</button>
+    </form>
+    
+    <p style="margin-top: 20px; font-size: 0.9rem;">
+        ¿No tienes cuenta? <a href="{% url 'crear_lector' %}" style="color: var(--color-amarillo);" aria-label="Ir a la página de registro">Regístrate aquí</a>.
+    </p>
+</main>
+{% endblock %}
